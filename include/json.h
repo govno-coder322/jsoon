@@ -46,3 +46,4 @@ class Printer {
 public:
     void printTokens(const std::vector<Token>& tokens);
 };
+JSONValue parseValue(const std::vector<Token>& tokens, size_t& index);
