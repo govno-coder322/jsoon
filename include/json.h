@@ -35,8 +35,14 @@ enum class TokenType {
 };
 
 
-std::vector<Token> tokenize(const std::string& input);
+
 struct Token {
     TokenType type; //тип токена
     std::string value; // содержимое
+};
+std::vector<Token> tokenize(const std::string& input);
+std::ostream& operator<<(std::ostream& os, const Token& token);
+class Printer {
+public:
+    void printTokens(const std::vector<Token>& tokens);
 };
