@@ -49,6 +49,64 @@ JSONValue parseValue(const std::vector<Token>& tokens, size_t& index) {
             ++index;
             return value;
         }
+        case TokenType::LeftBracket: {
+            ++index; //skip
+
+            std::vector<JSONValue> value;
+            while (tokens[index].type != TokenType::RightBracket) {
+                JSONValue parsedValue = parseValue(tokens, index);
+                value.push_back(parsedValue);
+
+                if (tokens[index].type == TokenType::Comma) {
+                    ++index;
+                }
+            }
+
+            ++index;
+            JSONValue result;
+            result.value = value;
+            return result;
+        }
+        case TokenType::LeftBrace: {
+            ++index; //skip
+            std::map<std::string, JSONValue> obj;
+            while (tokens[index].type != TokenType::RightBrace) {
+                // parse key
+                if (tokens[index].type != TokenType::String) {
+                    std::cerr << "Excepted string as object key\n";
+                    exit(1);
+                }
+                //get key
+                std::string key = tokens[index].value;
+                ++index;
+
+                //parse colon
+                if (tokens[index].type != TokenType::Colon) {
+                    std::cerr << "Excepted colon after key\n";
+                    exit(1);
+                }
+
+                ++index; //skip colon
+
+                // parse value
+                JSONValue value = parseValue(tokens, index);
+                obj[key] = value;
+
+                // parse ,
+                if (tokens[index].type == TokenType::Comma) {
+                    ++index;
+                }
+                else if (tokens[index].type != TokenType::RightBrace) {
+                    std::cerr << "Excepted comma or closing brace\n";
+                    exit(1);
+                }
+            }
+
+            ++index; //skip }
+            JSONValue result;
+            result.value = obj;
+            return result;
+        }
 
     }
 
