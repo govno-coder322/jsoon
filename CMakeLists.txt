@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.31)
-project(json)
+project(jsoon)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(untitled1 src/main.cpp
-        include/json.h
+add_executable(jsoon
+        src/main.cpp
         src/lexer.cpp
         src/token.cpp
-        src/parser.cpp)
+        src/parser.cpp
+)
 
-include_directories(include)
+target_include_directories(jsoon PRIVATE include)
