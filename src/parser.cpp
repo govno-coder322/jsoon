@@ -145,10 +145,15 @@ void printJSONValue(const JSONValue& value, int indent) {
     else if (std::holds_alternative<std::map<std::string, JSONValue>>(value.value)) {
         std::cout << "{" << std::endl;
         for (const auto& [key, val] : std::get<std::map<std::string, JSONValue>>(value.value)) {
-            std::cout << "Key: " << key << std::endl;
-            std::cout << "Value: ";
-            printJSONValue(val, indent +4); // передаем val как JSONValue рекурсивно
-        }\
+            std::cout << std::string(indent + 2, ' ') << '"' << key << "\": "; // "key":
+            if (std::holds_alternative<std::map<std::string, JSONValue>>(val.value) ||
+                std::holds_alternative<std::vector<JSONValue>>(val.value)) {
+                std::cout << std::endl;
+                printJSONValue(val, indent +4);
+            } else {
+                printJSONValue(val, indent +2);
+            }
+        }
         std::cout << "}" << std::endl;
     }
     else {
