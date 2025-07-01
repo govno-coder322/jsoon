@@ -114,3 +114,45 @@ JSONValue parseValue(const std::vector<Token>& tokens, size_t& index) {
     std::cerr << "Unsupported token in func parseValue\n";
     exit(1);
 }
+
+void printJSONValue(const JSONValue& value, int indent) {
+    if (std::holds_alternative<std::string>(value.value)) {
+        const std::string& str = std::get<std::string>(value.value);
+        std::cout << '"' << str << '"' << std::endl;
+        return;
+
+    }
+    else if (std::holds_alternative<double>(value.value)) {
+        std::cout << std::get<double>(value.value) <<std::endl;
+        return;
+    }
+    else if (std::holds_alternative<bool>(value.value)) {
+        std::cout << std::boolalpha << std::get<bool>(value.value) << std::endl;
+        return;
+    }
+    else if (std::holds_alternative<std::nullptr_t>(value.value)) {
+        std::cout << "null" << std::endl;
+        return;
+    }
+    else if (std::holds_alternative<std::vector<JSONValue> >(value.value)) {
+            std::cout << "[" << std::endl;
+            for (const auto &elem: std::get<std::vector<JSONValue> >(value.value)) {
+                std::cout << std::string(indent + 2, ' ');
+                printJSONValue(elem, indent + 2);
+            }
+            std::cout << std::string(indent, ' ') << "]" << std::endl;
+        }
+    else if (std::holds_alternative<std::map<std::string, JSONValue>>(value.value)) {
+        std::cout << "{" << std::endl;
+        for (const auto& [key, val] : std::get<std::map<std::string, JSONValue>>(value.value)) {
+            std::cout << "Key: " << key << std::endl;
+            std::cout << "Value: ";
+            printJSONValue(val, indent +4); // передаем val как JSONValue рекурсивно
+        }\
+        std::cout << "}" << std::endl;
+    }
+    else {
+        std::cerr << "Unknown JSONValue type" << std::endl;
+        return;
+    }
+}
